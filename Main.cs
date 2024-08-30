@@ -68,7 +68,7 @@ namespace Wox.Plugin.Todos
                         t2 => "click to mark todo as not done",
                         (c, t3) =>
                         {
-                            _todos.Complete(t3);
+                            _todos.Uncheck(t3);
                             //requery to refresh results
                             _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -l ", true);
                             return false;
