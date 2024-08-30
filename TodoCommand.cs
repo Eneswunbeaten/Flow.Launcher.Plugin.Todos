@@ -15,6 +15,8 @@ namespace Wox.Plugin.Todos
         [Description("Help")]
         H,
         [Description("Reload")]
-        Rl
+        Rl,
+        [Description("Uncheck")]
+        U
     }
 }

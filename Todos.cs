@@ -155,6 +155,26 @@ namespace Wox.Plugin.Todos
             return this;
         }
 
+        public Todos Uncheck(Todo todo, Action callback = null)
+        {
+            var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
+            if (item != null)
+            {
+                if (item.Completed == false)
+                {
+                    item.Completed = true;
+                }
+                else
+                {
+                    item.Completed = false;
+                }
+            }
+
+            Save();
+            callback?.Invoke();
+            return this;
+        }
+
         public Todos CompleteAll(Action callback = null)
         {
             _todoList.ForEach(t =>
@@ -165,6 +185,24 @@ namespace Wox.Plugin.Todos
             {
                 Context.API.ChangeQuery($"{ActionKeyword} ");
                 Alert("Success", "all todos done!");
+            }
+            else
+            {
+                callback();
+            }
+            return this;
+        }
+
+        public Todos UncheckAll(Action callback = null)
+        {
+            _todoList.ForEach(t =>
+            {
+                t.Completed = false;
+            });
+            if (callback == null)
+            {
+                Context.API.ChangeQuery($"{ActionKeyword} ");
+                Alert("Success", "all todos unchecked!");
             }
             else
             {

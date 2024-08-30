@@ -48,6 +48,32 @@ namespace Wox.Plugin.Todos
             {
                 case TodoCommand.H:
                     return help.Show;
+                case TodoCommand.U:
+                    if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return new List<Result> {
+                            new Result {
+                                Title = "Mark all todos as not done?",
+                                SubTitle = "click to make all todos as not done",
+                                IcoPath = _todos.GetFilePath(),
+                                Action = c => {
+                                    _todos.UncheckAll();
+                                    return true;
+                                }
+                            }
+                        };
+                    }
+                    var uResults = _todos.Find(
+                        t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && t.Completed,
+                        t2 => "click to mark todo as not done",
+                        (c, t3) =>
+                        {
+                            _todos.Complete(t3);
+                            //requery to refresh results
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -l ", true);
+                            return false;
+                        });
+                    return uResults;
                 case TodoCommand.C:
                     if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
                     {

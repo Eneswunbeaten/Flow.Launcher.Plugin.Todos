@@ -103,6 +103,15 @@ namespace Wox.Plugin.Todos
                             _context.API.ChangeQuery($"{_query.ActionKeyword} -c --all");
                             return false;
                         }
+                    },
+                    new Result {
+                        Title = $"{_query.ActionKeyword} -u [keyword]",
+                        SubTitle = "mark todo as not done",
+                        IcoPath = _iconPath,
+                        Action = c => {
+                            _context.API.ChangeQuery($"{_query.ActionKeyword} -u ");
+                            return false;
+                        }
                     }
                 };
             }
