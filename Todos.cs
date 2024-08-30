@@ -166,6 +166,7 @@ namespace Wox.Plugin.Todos
             _todoList.ForEach(t =>
             {
                 t.Completed = true;
+                Save();
             });
             if (callback == null)
             {
@@ -184,6 +185,7 @@ namespace Wox.Plugin.Todos
             _todoList.ForEach(t =>
             {
                 t.Completed = false;
+                Save();
             });
             if (callback == null)
             {
