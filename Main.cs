@@ -7,7 +7,7 @@ using Flow.Launcher.Infrastructure.Storage;
 
 namespace Wox.Plugin.Todos
 {
-    public class Main : IPlugin, ISettingProvider, ISavable
+    public class Main : IPlugin, ISettingProvider, Flow.Launcher.Plugin.ISavable
     {
         private static Todos _todos;
 
