@@ -58,7 +58,7 @@ namespace Wox.Plugin.Todos
                                 IcoPath = _todos.GetFilePath(),
                                 Action = c => {
                                     _todos.UncheckAll();
-                                    return true;
+                                    return false;
                                 }
                             }
                         };
@@ -70,7 +70,7 @@ namespace Wox.Plugin.Todos
                         {
                             _todos.Uncheck(t3);
                             //requery to refresh results
-                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -l ", true);
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -u ", true);
                             return false;
                         });
                     return uResults;
@@ -84,7 +84,7 @@ namespace Wox.Plugin.Todos
                                 IcoPath = _todos.GetFilePath(),
                                 Action = c => {
                                     _todos.CompleteAll();
-                                    return true;
+                                    return false;
                                 }
                             }
                         };
@@ -96,7 +96,7 @@ namespace Wox.Plugin.Todos
                         {
                             _todos.Complete(t3);
                             //requery to refresh results
-                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -l ", true);
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -c ", true);
                             return false;
                         });
                     return cResults;
@@ -110,7 +110,7 @@ namespace Wox.Plugin.Todos
                                 IcoPath = _todos.GetFilePath(),
                                 Action = c => {
                                     _todos.RemoveAll();
-                                    return true;
+                                    return false;
                                 }
                             }
                         };
@@ -124,7 +124,7 @@ namespace Wox.Plugin.Todos
                                 IcoPath = _todos.GetFilePath(),
                                 Action = c => {
                                     _todos.RemoveAllCompletedTodos();
-                                    return true;
+                                    return false;
                                 }
                             }
                         };
@@ -135,7 +135,7 @@ namespace Wox.Plugin.Todos
                         (c, t3) =>
                         {
                             _todos.Remove(t3);
-                            return true;
+                            return false;
                         });
                     return results;
                 case TodoCommand.A:
