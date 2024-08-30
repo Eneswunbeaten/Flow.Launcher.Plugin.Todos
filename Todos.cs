@@ -140,8 +140,16 @@ namespace Wox.Plugin.Todos
             var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
             if (item != null)
             {
-                item.Completed = true;
+                if (item.Completed == false)
+                {
+                    item.Completed = true;
+                }
+                else 
+                { 
+                    item.Completed = false;
+                }
             }
+
             Save();
             callback?.Invoke();
             return this;
