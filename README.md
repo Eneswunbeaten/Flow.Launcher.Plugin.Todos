@@ -1,4 +1,10 @@
-﻿This is a port of the Wox plugin Wox.Plugin.Todos created by caoyue (@caoyue).
+Reason for Forking Source
+--------------------------
+This was project was originally forked to add ability to toggle todo completions on and off which seems like a simple tweak. The source project appears to be quite stale so forking seemed the best option. This forked version includes updated NuGet packages as well as .NET framework. The source project contains outdated NuGet packages, one of which has a high severity vulnerability.
+
+Original ReadMe from forked source
+--------------------------
+This is a port of the Wox plugin Wox.Plugin.Todos created by caoyue (@caoyue).
 
 This port is intended to be used for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher). It will not work for Wox.
 
