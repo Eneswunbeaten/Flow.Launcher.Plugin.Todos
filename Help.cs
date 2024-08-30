@@ -112,6 +112,15 @@ namespace Wox.Plugin.Todos
                             _context.API.ChangeQuery($"{_query.ActionKeyword} -u ");
                             return false;
                         }
+                    },
+                    new Result {
+                        Title = $"{_query.ActionKeyword} -u --all",
+                        SubTitle = "mark all todos as not done",
+                        IcoPath = _iconPath,
+                        Action = c => {
+                            _context.API.ChangeQuery($"{_query.ActionKeyword} -u --all");
+                            return false;
+                        }
                     }
                 };
             }
