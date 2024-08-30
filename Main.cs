@@ -135,6 +135,8 @@ namespace Wox.Plugin.Todos
                         (c, t3) =>
                         {
                             _todos.Remove(t3);
+                            //requery to refresh results
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -r ", true);
                             return false;
                         });
                     return results;

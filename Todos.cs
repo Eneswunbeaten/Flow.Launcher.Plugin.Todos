@@ -74,7 +74,7 @@ namespace Wox.Plugin.Todos
             Save();
             if (callback == null)
             {
-                //Context.API.ChangeQuery($"{ActionKeyword} ");
+                Context.API.ChangeQuery($"{ActionKeyword} -a ");
             }
             else
             {
@@ -93,8 +93,8 @@ namespace Wox.Plugin.Todos
             Save();
             if (callback == null)
             {
-                //Context.API.ChangeQuery($"{ActionKeyword} ");
-                Alert("Success", "todo removed!");
+                Context.API.ChangeQuery($"{ActionKeyword} -r");
+                //Alert("Success", "todo removed!");
             }
             else
             {
