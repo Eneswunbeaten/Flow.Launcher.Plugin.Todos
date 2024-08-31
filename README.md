@@ -1,6 +1,6 @@
 Reason for Forking Source
 --------------------------
-This was project was originally forked to add ability to toggle todo completions on and off which seems like a simple tweak. The source project appears to be quite stale so forking seemed the best option. This forked version includes updated NuGet packages as well as .NET framework. The source project contains outdated NuGet packages, one of which has a high severity vulnerability.
+This was project was originally forked to add ability to toggle todo completions on and off which seemed like a simple tweak. The source project appeared to be quite stale so forking seemed the best option. This forked version includes updated NuGet packages as well as .NET framework. The source project contains outdated NuGet packages, one of which has a high severity vulnerability. After adding in the missing capability to uncheck completed items, many more improvements were added as described below.
 
 ### Improved Behavior
 Rather than clearing commands each time add, complete, remove, uncheck is performed, the corresponding action is retained allowing for quick repeat actions (i.e., adding/completing/removing/unchecking multiple items in quick succession)
