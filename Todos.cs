@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace Wox.Plugin.Todos
 {
+    // Represents a single Todo item
     public class Todo
     {
         public int Id { get; set; }
@@ -17,69 +18,44 @@ namespace Wox.Plugin.Todos
         public DateTime CreatedTime { get; set; }
     }
 
+    // Manages a collection of Todo items
     public class Todos
     {
         private const string DataFileName = @"todos.data.json";
 
         private string _dataFolderPath;
-
         private List<Todo> _todoList;
         public PluginInitContext Context { get; }
-
         public string ActionKeyword { get; set; }
 
         public Todos(PluginInitContext context, Settings setting)
         {
             Context = context;
-
-            if (context.CurrentPluginMetadata.ActionKeywords != null
-                && context.CurrentPluginMetadata.ActionKeywords.Any())
-            {
-                ActionKeyword = context.CurrentPluginMetadata.ActionKeywords[0];
-            }
-
+            ActionKeyword = context.CurrentPluginMetadata.ActionKeywords?.FirstOrDefault() ?? string.Empty;
             _dataFolderPath = setting.FolderPath;
             Load();
         }
 
         public List<Result> Results => ToResults(_todoList);
 
-        public int MaxId
-        {
-            get { return _todoList != null && _todoList.Any() ? _todoList.Max(t => t.Id) : 0; }
-        }
+        private int MaxId => _todoList?.Max(t => t.Id) ?? 0;
 
-        public void Reload()
-        {
-            Load();
-        }
+        public void Reload() => Load();
 
-        public List<Result> Find(
-            Func<Todo, bool> func,
-            Func<Todo, string> subTitleFormatter = null,
-            Func<ActionContext, Todo, bool> itemAction = null)
+        public List<Result> Find(Func<Todo, bool> predicate, Func<Todo, string> subTitleFormatter = null, Func<ActionContext, Todo, bool> itemAction = null)
         {
-            return ToResults(_todoList.Where(func), subTitleFormatter, itemAction);
+            return ToResults(_todoList.Where(predicate), subTitleFormatter, itemAction);
         }
 
         public Todos Add(Todo todo, Action callback = null)
         {
-            if (string.IsNullOrEmpty(todo.Content))
-            {
-                return this;
-            }
+            if (string.IsNullOrEmpty(todo.Content)) return this;
 
             todo.Id = MaxId + 1;
             _todoList.Add(todo);
             Save();
-            if (callback == null)
-            {
-                Context.API.ChangeQuery($"{ActionKeyword} -a ");
-            }
-            else
-            {
-                callback();
-            }
+            callback?.Invoke();
+            Context.API.ChangeQuery($"{ActionKeyword} -a ");
             return this;
         }
 
@@ -89,33 +65,19 @@ namespace Wox.Plugin.Todos
             if (item != null)
             {
                 _todoList.Remove(item);
-            }
-            Save();
-            if (callback == null)
-            {
-                Context.API.ChangeQuery($"{ActionKeyword} -r");
-                //Alert("Success", "todo removed!");
-            }
-            else
-            {
-                callback();
+                Save();
+                //Alert("Success", "Todo removed!");
+                callback?.Invoke();
             }
             return this;
         }
 
         public Todos RemoveAll(Action callback = null)
         {
-            _todoList.RemoveAll(t => true);
+            _todoList.Clear();
             Save();
-            if (callback == null)
-            {
-                Context.API.ChangeQuery($"{ActionKeyword} ");
-                Alert("Success", "all todos removed!");
-            }
-            else
-            {
-                callback();
-            }
+            Alert("Success", "All todos removed!");
+            callback?.Invoke();
             return this;
         }
 
@@ -123,15 +85,8 @@ namespace Wox.Plugin.Todos
         {
             _todoList.RemoveAll(t => t.Completed);
             Save();
-            if (callback == null)
-            {
-                Context.API.ChangeQuery($"{ActionKeyword} ");
-                Alert("Success", "All completed todos removed!");
-            }
-            else
-            {
-                callback();
-            }
+            Alert("Success", "All completed todos removed!");
+            callback?.Invoke();
             return this;
         }
 
@@ -141,10 +96,9 @@ namespace Wox.Plugin.Todos
             if (item != null)
             {
                 item.Completed = true;
+                Save();
+                callback?.Invoke();
             }
-
-            Save();
-            callback?.Invoke();
             return this;
         }
 
@@ -154,48 +108,27 @@ namespace Wox.Plugin.Todos
             if (item != null)
             {
                 item.Completed = false;
+                Save();
+                callback?.Invoke();
             }
-
-            Save();
-            callback?.Invoke();
             return this;
         }
 
         public Todos CompleteAll(Action callback = null)
         {
-            _todoList.ForEach(t =>
-            {
-                t.Completed = true;
-                Save();
-            });
-            if (callback == null)
-            {
-                Context.API.ChangeQuery($"{ActionKeyword} ");
-                Alert("Success", "all todos done!");
-            }
-            else
-            {
-                callback();
-            }
+            _todoList.ForEach(t => t.Completed = true);
+            Save();
+            Alert("Success", "All todos marked as done!");
+            callback?.Invoke();
             return this;
         }
 
         public Todos UncheckAll(Action callback = null)
         {
-            _todoList.ForEach(t =>
-            {
-                t.Completed = false;
-                Save();
-            });
-            if (callback == null)
-            {
-                Context.API.ChangeQuery($"{ActionKeyword} ");
-                Alert("Success", "all todos unchecked!");
-            }
-            else
-            {
-                callback();
-            }
+            _todoList.ForEach(t => t.Completed = false);
+            Save();
+            Alert("Success", "All todos unchecked!");
+            callback?.Invoke();
             return this;
         }
 
@@ -206,8 +139,7 @@ namespace Wox.Plugin.Todos
 
         public string GetFilePath(string icon = "")
         {
-            return Path.Combine(Context.CurrentPluginMetadata.PluginDirectory,
-                string.IsNullOrEmpty(icon) ? @"ico\app.png" : icon);
+            return Path.Combine(Context.CurrentPluginMetadata.PluginDirectory, string.IsNullOrEmpty(icon) ? @"ico\app.png" : icon);
         }
 
         private void Load()
@@ -216,18 +148,24 @@ namespace Wox.Plugin.Todos
             {
                 _dataFolderPath = Context.CurrentPluginMetadata.PluginDirectory;
             }
+
             try
             {
-                var text = File.ReadAllText(Path.Combine(_dataFolderPath, DataFileName));
-                _todoList = JsonConvert.DeserializeObject<List<Todo>>(text);
-            }
-            catch (FileNotFoundException)
-            {                
-                Save();
+                var filePath = Path.Combine(_dataFolderPath, DataFileName);
+                if (File.Exists(filePath))
+                {
+                    var text = File.ReadAllText(filePath);
+                    _todoList = JsonConvert.DeserializeObject<List<Todo>>(text) ?? new List<Todo>();
+                }
+                else
+                {
+                    _todoList = new List<Todo>();
+                    Save();
+                }
             }
             catch (Exception e)
             {
-                throw new Exception($"can't read data file: {e.Message}!");
+                throw new Exception($"Failed to read data file: {e.Message}");
             }
         }
 
@@ -235,47 +173,26 @@ namespace Wox.Plugin.Todos
         {
             try
             {
-                if (_todoList is null)
-                {
-                    _todoList = new List<Todo>();
-                }
                 var json = JsonConvert.SerializeObject(_todoList);
                 File.WriteAllText(Path.Combine(_dataFolderPath, DataFileName), json);
             }
             catch (Exception e)
             {
-                throw new Exception($"write data failed: {e.Message}!");
+                throw new Exception($"Failed to write data file: {e.Message}");
             }
         }
 
-        private List<Result> ToResults(
-            IEnumerable<Todo> todos,
-            Func<Todo, string> subTitleFormatter = null,
-            Func<ActionContext, Todo, bool> itemAction = null)
+        private List<Result> ToResults(IEnumerable<Todo> todos, Func<Todo, string> subTitleFormatter = null, Func<ActionContext, Todo, bool> itemAction = null)
         {
             var results = todos.OrderByDescending(t => t.CreatedTime)
                 .Select(t => new Result
                 {
-                    Title = $"{t.Content}",
-                    SubTitle = subTitleFormatter == null
-                        ? $"{ToRelativeTime(t.CreatedTime)}"
-                        : subTitleFormatter(t),
+                    Title = t.Content,
+                    SubTitle = subTitleFormatter?.Invoke(t) ?? $"{ToRelativeTime(t.CreatedTime)} | Copy to clipboard",
                     IcoPath = GetFilePath(t.Completed ? @"ico\done.png" : @"ico\todo.png"),
                     Action = c =>
                     {
-                        if (itemAction != null)
-                        {
-                            return itemAction(c, t);
-                        }
-                        try
-                        {
-                            Clipboard.SetText(t.Content);
-                        }
-                        catch (ExternalException)
-                        {
-                            Alert("Failed", "Copy failed, please try again later");
-                        }
-                        return true;
+                        return itemAction?.Invoke(c, t) ?? PerformDefaultAction(t);
                     }
                 }).ToList();
 
@@ -284,7 +201,7 @@ namespace Wox.Plugin.Todos
                 results.Add(new Result
                 {
                     Title = "No results",
-                    SubTitle = "click to view help",
+                    SubTitle = "Click to view help",
                     IcoPath = GetFilePath(),
                     Action = c =>
                     {
@@ -296,43 +213,44 @@ namespace Wox.Plugin.Todos
             return results;
         }
 
+        private bool PerformDefaultAction(Todo todo)
+        {
+            try
+            {
+                Clipboard.SetText(todo.Content);
+                return true;
+            }
+            catch (Exception)
+            {
+                Alert("Failed", "Copy failed, please try again later.");
+                return false;
+            }
+        }
+
         private static string ToRelativeTime(DateTime value)
         {
-            const int second = 1;
-            const int minute = 60 * second;
-            const int hour = 60 * minute;
-            const int day = 24 * hour;
-            const int month = 30 * day;
-
             var ts = DateTime.Now.Subtract(value);
             var seconds = ts.TotalSeconds;
 
-            if (seconds < 1 * minute)
-                return ts.Seconds == 1 ? "one second ago" : ts.Seconds + " seconds ago";
+            if (seconds < 60)
+                return seconds < 2 ? "one second ago" : $"{ts.Seconds} seconds ago";
 
-            if (seconds < 60 * minute)
-                return ts.Minutes + " minutes ago";
+            if (seconds < 3600)
+                return ts.Minutes == 1 ? "one minute ago" : $"{ts.Minutes} minutes ago";
 
-            if (seconds < 120 * minute)
-                return "an hour ago";
+            if (seconds < 86400)
+                return ts.Hours == 1 ? "an hour ago" : $"{ts.Hours} hours ago";
 
-            if (seconds < 24 * hour)
-                return ts.Hours + " hours ago";
-
-            if (seconds < 48 * hour)
+            if (seconds < 172800)
                 return "yesterday";
 
-            if (seconds < 30 * day)
-                return ts.Days + " days ago";
+            if (seconds < 2592000)
+                return ts.Days == 1 ? "one day ago" : $"{ts.Days} days ago";
 
-            if (seconds < 12 * month)
-            {
-                var months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));
-                return months <= 1 ? "one month ago" : months + " months ago";
-            }
+            if (seconds < 31536000)
+                return ts.Days / 30 <= 1 ? "one month ago" : $"{ts.Days / 30} months ago";
 
-            var years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
-            return years <= 1 ? "one year ago" : years + " years ago";
+            return ts.Days / 365 <= 1 ? "one year ago" : $"{ts.Days / 365} years ago";
         }
     }
 }

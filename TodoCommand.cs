@@ -17,6 +17,8 @@ namespace Wox.Plugin.Todos
         [Description("Reload")]
         Rl,
         [Description("Uncheck")]
-        U
+        U,
+        [Description("Sort")]
+        S
     }
 }

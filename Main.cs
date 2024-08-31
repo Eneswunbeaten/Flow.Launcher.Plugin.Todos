@@ -10,7 +10,6 @@ namespace Wox.Plugin.Todos
     public class Main : IPlugin, ISettingProvider, Flow.Launcher.Plugin.ISavable
     {
         private static Todos _todos;
-
         private readonly PluginJsonStorage<Settings> _storage;
         private readonly Settings _setting;
 
@@ -20,12 +19,11 @@ namespace Wox.Plugin.Todos
             _setting = _storage.Load();
         }
 
-        #region Query
         public List<Result> Query(Query query)
         {
             _todos.Reload();
-
             _todos.ActionKeyword = query.ActionKeyword;
+
             var help = new Help(_todos.Context, query);
 
             if (query.FirstSearch.Equals("-"))
@@ -38,8 +36,7 @@ namespace Wox.Plugin.Todos
                 return Search(query.Search, t => !t.Completed);
             }
 
-            TodoCommand op;
-            if (!Enum.TryParse(query.FirstSearch.TrimStart('-'), true, out op))
+            if (!Enum.TryParse(query.FirstSearch.TrimStart('-'), true, out TodoCommand op))
             {
                 return Search(query.Search, t => !t.Completed);
             }
@@ -49,108 +46,20 @@ namespace Wox.Plugin.Todos
                 case TodoCommand.H:
                     return help.Show;
                 case TodoCommand.U:
-                    if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new List<Result> {
-                            new Result {
-                                Title = "Mark all todos as not done?",
-                                SubTitle = "click to make all todos as not done",
-                                IcoPath = _todos.GetFilePath(),
-                                Action = c => {
-                                    _todos.UncheckAll();
-                                    return false;
-                                }
-                            }
-                        };
-                    }
-                    var uResults = _todos.Find(
-                        t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && t.Completed,
-                        t2 => "click to mark todo as not done",
-                        (c, t3) =>
-                        {
-                            _todos.Uncheck(t3);
-                            //requery to refresh results
-                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -u ", true);
-                            return false;
-                        });
-                    return uResults;
+                    return HandleUncheck(query);
                 case TodoCommand.C:
-                    if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new List<Result> {
-                            new Result {
-                                Title = "Mark all todos as done?",
-                                SubTitle = "click to make all todos as done",
-                                IcoPath = _todos.GetFilePath(),
-                                Action = c => {
-                                    _todos.CompleteAll();
-                                    return false;
-                                }
-                            }
-                        };
-                    }
-                    var cResults = _todos.Find(
-                        t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed,
-                        t2 => "click to mark todo as done",
-                        (c, t3) =>
-                        {
-                            _todos.Complete(t3);
-                            //requery to refresh results
-                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -c ", true);
-                            return false;
-                        });
-                    return cResults;
+                    return HandleComplete(query);
                 case TodoCommand.R:
-                    if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new List<Result> {
-                            new Result {
-                                Title = "Remove all todos?",
-                                SubTitle = "click to remove all todos",
-                                IcoPath = _todos.GetFilePath(),
-                                Action = c => {
-                                    _todos.RemoveAll();
-                                    return false;
-                                }
-                            }
-                        };
-                    }
-                    else if (query.SecondSearch.Equals("--done", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new List<Result> {
-                            new Result {
-                                Title = "Remove all completed todos?",
-                                SubTitle = "click to remove all todos",
-                                IcoPath = _todos.GetFilePath(),
-                                Action = c => {
-                                    _todos.RemoveAllCompletedTodos();
-                                    return false;
-                                }
-                            }
-                        };
-                    }
-                    var results = _todos.Find(
-                        t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0,
-                        t2 => "click to remove todo",
-                        (c, t3) =>
-                        {
-                            _todos.Remove(t3);
-                            //requery to refresh results
-                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -r ", true);
-                            return false;
-                        });
-                    return results;
+                    return HandleRemove(query);
                 case TodoCommand.A:
-                    return new List<Result> {
-                        AddResult(query.SecondToEndSearch)
-                    };
+                    return new List<Result> { AddResult(query.SecondToEndSearch) };
                 case TodoCommand.L:
                     return Search(query.SecondToEndSearch);
                 case TodoCommand.Rl:
                     return new List<Result> {
                         new Result {
                             Title = "Reload todos from data file?",
-                            SubTitle = "click to reload",
+                            SubTitle = "Click to reload",
                             IcoPath = _todos.GetFilePath(),
                             Action = c => {
                                 _todos.Reload();
@@ -164,8 +73,6 @@ namespace Wox.Plugin.Todos
             }
         }
 
-        #endregion
-
         public void Init(PluginInitContext context)
         {
             _todos = new Todos(context, _setting);
@@ -176,26 +83,29 @@ namespace Wox.Plugin.Todos
             return new FilePathSetting(_setting, _storage);
         }
 
-        #region Utils
-
-        private static List<Result> Search(string search, Func<Todo, bool> conditions = null)
+        public void Save()
         {
-            var s = search;
+            _storage.Save();
+        }
+
+        private List<Result> Search(string search, Func<Todo, bool> conditions = null)
+        {
             var results = _todos.Find(t =>
-                t.Content.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0
+                t.Content.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0
                 && (conditions?.Invoke(t) ?? true));
-            if (!string.IsNullOrEmpty(s) && !results.Any())
+
+            if (!results.Any() && !string.IsNullOrEmpty(search))
             {
-                results.Insert(0, AddResult(s));
+                results.Insert(0, AddResult(search));
             }
             return results;
         }
 
-        private static Result AddResult(string content)
+        private Result AddResult(string content)
         {
             return new Result
             {
-                Title = $"add new item \"{content}\"",
+                Title = $"Add new item \"{content}\"",
                 SubTitle = "",
                 IcoPath = _todos.GetFilePath(),
                 Action = c =>
@@ -211,11 +121,104 @@ namespace Wox.Plugin.Todos
             };
         }
 
-        public void Save()
+        private List<Result> HandleUncheck(Query query)
         {
-            _storage.Save();
+            if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Mark all todos as not done?",
+                        SubTitle = "Click to mark all todos as not done",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.UncheckAll();
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+
+            return _todos.Find(
+                t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && t.Completed,
+                t => "Click to mark todo as not done",
+                (c, t) => {
+                    _todos.Uncheck(t);
+                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -u ", true);
+                    return false;
+                });
         }
 
-        #endregion
+        private List<Result> HandleComplete(Query query)
+        {
+            if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Mark all todos as done?",
+                        SubTitle = "Click to mark all todos as done",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.CompleteAll();
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+
+            return _todos.Find(
+                t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed,
+                t => "Click to mark todo as done",
+                (c, t) => {
+                    _todos.Complete(t);
+                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -c ", true);
+                    return false;
+                });
+        }
+
+        private List<Result> HandleRemove(Query query)
+        {
+            if (query.SecondSearch.Equals("--all", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Remove all todos?",
+                        SubTitle = "Click to remove all todos",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.RemoveAll();
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+
+            if (query.SecondSearch.Equals("--done", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Remove all completed todos?",
+                        SubTitle = "Click to remove all completed todos",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.RemoveAllCompletedTodos();
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+
+            return _todos.Find(
+                t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0,
+                t => "Click to remove todo",
+                (c, t) => {
+                    _todos.Remove(t);
+                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -r ", true);
+                    return false;
+                });
+        }
     }
 }

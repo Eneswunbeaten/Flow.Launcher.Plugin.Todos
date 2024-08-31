@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Flow.Launcher.Plugin;
@@ -17,113 +18,85 @@ namespace Wox.Plugin.Todos
             _iconPath = Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, @"ico\app.png");
         }
 
+        public List<Result> Show => GetHelpResults();
 
-        public List<Result> Show
+        private List<Result> GetHelpResults()
         {
-            get
+            var results = new List<Result>
             {
-                return new List<Result> {
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -a [text]",
-                        SubTitle = "add todos",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -a ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -rl",
-                        SubTitle = "reload todos from data file",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} [keyword]",
-                        SubTitle = "list todos",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -l ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -l [keyword]",
-                        SubTitle = "list all todos, inclued completed todos",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -l ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -r [keyword]",
-                        SubTitle = "remove todos",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -r ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -r --all",
-                        SubTitle = "remove all todos",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -r --all");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -r --done",
-                        SubTitle = "Remove all commpleted todos",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -r --done");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -c [keyword]",
-                        SubTitle = "mark todo as done",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -c ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -c --all",
-                        SubTitle = "mark all todos as done",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -c --all");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -u [keyword]",
-                        SubTitle = "mark todo as not done",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -u ");
-                            return false;
-                        }
-                    },
-                    new Result {
-                        Title = $"{_query.ActionKeyword} -u --all",
-                        SubTitle = "mark all todos as not done",
-                        IcoPath = _iconPath,
-                        Action = c => {
-                            _context.API.ChangeQuery($"{_query.ActionKeyword} -u --all");
-                            return false;
-                        }
-                    }
-                };
-            }
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -a [text]",
+                    subtitle: "Add a new todo item",
+                    query: $"{_query.ActionKeyword} -a [text]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -c [keyword]",
+                    subtitle: "Complete a todo item matching the keyword",
+                    query: $"{_query.ActionKeyword} -c [keyword]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -c --all",
+                    subtitle: "Complete all todos",
+                    query: $"{_query.ActionKeyword} -c --all"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -u [keyword]",
+                    subtitle: "Uncheck a completed todo item matching the keyword",
+                    query: $"{_query.ActionKeyword} -u [keyword]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -u --all",
+                    subtitle: "Uncheck all completed todos",
+                    query: $"{_query.ActionKeyword} -u --all"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} [keyword]",
+                    subtitle: "List todos matching the keyword",
+                    query: $"{_query.ActionKeyword} [keyword]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -l [keyword]",
+                    subtitle: "List all todos, including completed ones",
+                    query: $"{_query.ActionKeyword} -l [keyword]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -r [keyword]",
+                    subtitle: "Remove todos matching the keyword",
+                    query: $"{_query.ActionKeyword} -r [keyword]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -r --all",
+                    subtitle: "Remove all todos",
+                    query: $"{_query.ActionKeyword} -r --all"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -r --done",
+                    subtitle: "Remove all completed todos",
+                    query: $"{_query.ActionKeyword} -r --done"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -rl",
+                    subtitle: "Reload todos from the data file",
+                    query: $"{_query.ActionKeyword} -rl"
+                )
+            };
+
+            return results;
+        }
+
+        private Result CreateResult(string title, string subtitle, string query)
+        {
+            return new Result
+            {
+                Title = title,
+                SubTitle = subtitle,
+                IcoPath = _iconPath,
+                Action = _ =>
+                {
+                    _context.API.ChangeQuery(query);
+                    return false;
+                }
+            };
         }
     }
 }
