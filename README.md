@@ -7,6 +7,8 @@ Rather than clearing commands each time add, complete, remove, uncheck is perfor
 ### Updated Backend
 Updated to .NET framework to latest version utilized by Flow-Launcher
 Updated NuGet packages and resolved high severity vulnerability
+### Optimized Codebase
+Restructured entire codebase for optimized performance, readability, and maintainability 
 
 Original ReadMe from forked source
 --------------------------
