@@ -4,21 +4,21 @@ namespace Wox.Plugin.Todos
 {
     public enum TodoCommand
     {
-        [Description("List")]
-        L,
         [Description("Add")]
         A,
         [Description("Complete")]
         C,
-        [Description("Remove")]
-        R,
+        [Description("Edit")] // TODO  
+        E,
         [Description("Help")]
         H,
+        [Description("List")]
+        L,
         [Description("Reload")]
         Rl,
+        [Description("Remove")]
+        R,
         [Description("Uncheck")]
-        U,
-        [Description("Sort")]
-        S
+        U
     }
 }
