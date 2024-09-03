@@ -25,11 +25,6 @@ namespace Wox.Plugin.Todos
             var results = new List<Result>
             {
                 CreateResult(
-                    title: $"{_query.ActionKeyword} [keyword]",
-                    subtitle: "List todos matching the keyword",
-                    query: $"{_query.ActionKeyword} [keyword]"
-                ),
-                CreateResult(
                     title: $"{_query.ActionKeyword} -a [text]",
                     subtitle: "Add a new todo item",
                     query: $"{_query.ActionKeyword} -a [text]"
@@ -60,11 +55,6 @@ namespace Wox.Plugin.Todos
                     query: $"{_query.ActionKeyword} -e [keyword]"
                 ),
                 CreateResult(
-                    title: $"{_query.ActionKeyword} -l [keyword]",
-                    subtitle: "List all todos, including completed ones",
-                    query: $"{_query.ActionKeyword} -l [keyword]"
-                ),
-                CreateResult(
                     title: $"{_query.ActionKeyword} -r [keyword]",
                     subtitle: "Remove todos matching the keyword",
                     query: $"{_query.ActionKeyword} -r [keyword]"
@@ -83,6 +73,16 @@ namespace Wox.Plugin.Todos
                     title: $"{_query.ActionKeyword} -rl",
                     subtitle: "Reload todos from the data file",
                     query: $"{_query.ActionKeyword} -rl"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -l [keyword]",
+                    subtitle: "List all todos, including completed ones",
+                    query: $"{_query.ActionKeyword} -l [keyword]"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} [keyword]",
+                    subtitle: "List todos matching the keyword",
+                    query: $"{_query.ActionKeyword} [keyword]"
                 )
             };
 

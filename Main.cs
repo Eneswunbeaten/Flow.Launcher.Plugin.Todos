@@ -4,14 +4,13 @@ using System.Linq;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin;
 using Flow.Launcher.Infrastructure.Storage;
-using System.Collections;
 
 namespace Wox.Plugin.Todos
 {
     public class Main : IPlugin, ISettingProvider, Flow.Launcher.Plugin.ISavable
     {
         private static Todos _todos;
-        private static Todo _todo_to_edit;
+        private static Todo _todo_to_edit = null;
         private readonly PluginJsonStorage<Settings> _storage;
         private readonly Settings _setting;
 
@@ -30,6 +29,7 @@ namespace Wox.Plugin.Todos
 
             if (query.FirstSearch.Equals("-"))
             {
+                _todo_to_edit = null; // enforce reset of _todo_to_edit if user exited edit process early
                 return help.Show;
             }
 
@@ -56,9 +56,15 @@ namespace Wox.Plugin.Todos
                 case TodoCommand.A:
                     return new List<Result> { AddResult(query.SecondToEndSearch) };
                 case TodoCommand.E:
-                    return HandleEdit(query);
-                case TodoCommand.EE:
-                    return new List<Result> { EditResult(query.SecondToEndSearch) };
+                    if (_todo_to_edit == null)
+                    {
+                        return HandleEdit(query);
+                    }
+                    else
+                    {
+                        var result = new List<Result> { EditResult(query.SecondToEndSearch) };
+                        return result;
+                    }
                 case TodoCommand.L:
                     return Search(query.SecondToEndSearch);
                 case TodoCommand.Rl:
@@ -129,15 +135,15 @@ namespace Wox.Plugin.Todos
 
         private Result EditResult(string content)
         {
-            //var newcontent = content;
             return new Result
             {
-                Title = $"Enter new content for the todo: \"{content}\"",
-                SubTitle = $"Current content: {_todo_to_edit.Content}. Press Enter when done.",
+                Title = $"Enter new title: \"{content}\"",
+                SubTitle = $"Current title: {_todo_to_edit.Content}. Press Enter when done.",
                 IcoPath = _todos.GetFilePath(),
                 Action = c =>
                 {
                     _todos.Edit(_todo_to_edit, content);
+                    _todo_to_edit = null; // Reset to null after editing is done
                     return false;
                 }
             };
@@ -245,13 +251,13 @@ namespace Wox.Plugin.Todos
 
         private List<Result> HandleEdit(Query query)
         {
-            _todo_to_edit = null;
+            _todo_to_edit = null; // Ensure _todo_to_edit is reset for the next operation
             return _todos.Find(
                 t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed,
                 t => "Click to edit todo",
                 (c, t) => {
                     _todo_to_edit = t;
-                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -ee ", true);
+                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -e {t.Content}", true);
                     return false;
                 });
         }

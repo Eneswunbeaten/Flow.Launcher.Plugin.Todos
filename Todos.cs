@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using Flow.Launcher.Plugin;
 using Newtonsoft.Json;
@@ -103,6 +102,7 @@ namespace Wox.Plugin.Todos
             try
             {
                 Clipboard.SetText(todo.Content);
+                Alert("Success", "Copied to clipboard!");
                 return true;
             }
             catch (Exception)
@@ -263,7 +263,6 @@ namespace Wox.Plugin.Todos
         public Todos Edit(Todo todo, string newcontent, Action callback = null)
         {
             var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
-            Alert("Info", $"newcontent = {newcontent}");
             if (item != null)
             {
                 item.Content = newcontent;
