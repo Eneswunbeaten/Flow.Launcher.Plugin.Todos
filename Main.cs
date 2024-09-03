@@ -4,12 +4,14 @@ using System.Linq;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin;
 using Flow.Launcher.Infrastructure.Storage;
+using System.Collections;
 
 namespace Wox.Plugin.Todos
 {
     public class Main : IPlugin, ISettingProvider, Flow.Launcher.Plugin.ISavable
     {
         private static Todos _todos;
+        private static Todo _todo_to_edit;
         private readonly PluginJsonStorage<Settings> _storage;
         private readonly Settings _setting;
 
@@ -53,6 +55,10 @@ namespace Wox.Plugin.Todos
                     return HandleRemove(query);
                 case TodoCommand.A:
                     return new List<Result> { AddResult(query.SecondToEndSearch) };
+                case TodoCommand.E:
+                    return HandleEdit(query);
+                case TodoCommand.EE:
+                    return new List<Result> { EditResult(query.SecondToEndSearch) };
                 case TodoCommand.L:
                     return Search(query.SecondToEndSearch);
                 case TodoCommand.Rl:
@@ -116,6 +122,22 @@ namespace Wox.Plugin.Todos
                         Completed = false,
                         CreatedTime = DateTime.Now
                     });
+                    return false;
+                }
+            };
+        }
+
+        private Result EditResult(string content)
+        {
+            //var newcontent = content;
+            return new Result
+            {
+                Title = $"Enter new content for the todo: \"{content}\"",
+                SubTitle = $"Current content: {_todo_to_edit.Content}. Press Enter when done.",
+                IcoPath = _todos.GetFilePath(),
+                Action = c =>
+                {
+                    _todos.Edit(_todo_to_edit, content);
                     return false;
                 }
             };
@@ -217,6 +239,19 @@ namespace Wox.Plugin.Todos
                 (c, t) => {
                     _todos.Remove(t);
                     _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -r ", true);
+                    return false;
+                });
+        }
+
+        private List<Result> HandleEdit(Query query)
+        {
+            _todo_to_edit = null;
+            return _todos.Find(
+                t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed,
+                t => "Click to edit todo",
+                (c, t) => {
+                    _todo_to_edit = t;
+                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -ee ", true);
                     return false;
                 });
         }

@@ -10,6 +10,8 @@ namespace Wox.Plugin.Todos
         C,
         [Description("Edit")] // TODO  
         E,
+        [Description("EditResult")] // TODO  
+        EE,
         [Description("Help")]
         H,
         [Description("List")]

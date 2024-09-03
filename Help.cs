@@ -25,6 +25,11 @@ namespace Wox.Plugin.Todos
             var results = new List<Result>
             {
                 CreateResult(
+                    title: $"{_query.ActionKeyword} [keyword]",
+                    subtitle: "List todos matching the keyword",
+                    query: $"{_query.ActionKeyword} [keyword]"
+                ),
+                CreateResult(
                     title: $"{_query.ActionKeyword} -a [text]",
                     subtitle: "Add a new todo item",
                     query: $"{_query.ActionKeyword} -a [text]"
@@ -50,9 +55,9 @@ namespace Wox.Plugin.Todos
                     query: $"{_query.ActionKeyword} -u --all"
                 ),
                 CreateResult(
-                    title: $"{_query.ActionKeyword} [keyword]",
-                    subtitle: "List todos matching the keyword",
-                    query: $"{_query.ActionKeyword} [keyword]"
+                    title: $"{_query.ActionKeyword} -e [keyword]",
+                    subtitle: "Edit an existing todo item matching the keyword",
+                    query: $"{_query.ActionKeyword} -e [keyword]"
                 ),
                 CreateResult(
                     title: $"{_query.ActionKeyword} -l [keyword]",

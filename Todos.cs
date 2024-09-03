@@ -260,6 +260,20 @@ namespace Wox.Plugin.Todos
             return this;
         }
 
+        public Todos Edit(Todo todo, string newcontent, Action callback = null)
+        {
+            var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
+            Alert("Info", $"newcontent = {newcontent}");
+            if (item != null)
+            {
+                item.Content = newcontent;
+                Save();
+                callback?.Invoke();
+                Context.API.ChangeQuery($"{ActionKeyword} ");
+            }
+            return this;
+        }
+
         public void Reload() => Load();
     }
 }
