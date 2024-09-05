@@ -3,10 +3,10 @@
   "ActionKeyword": "td",
   "Name": "Todos",
   "Description": "A simple todo app.",
-  "Author": "caoyue",
-  "Version": "2.0.1",
+  "Author": "chrisnicholas90 (originally by caoyue)",
+  "Version": "3.0.0",
   "Language": "csharp",
-  "Website": "https://github.com/jjw24/Wox.Plugin.Todos",
+  "Website": "https://github.com/chrisnicholas90/Wox.Plugin.Todos",
   "ExecuteFileName": "Wox.Plugin.Todos.dll",
   "IcoPath": "ico\\app.png"
 }

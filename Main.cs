@@ -62,8 +62,7 @@ namespace Wox.Plugin.Todos
                     }
                     else
                     {
-                        var result = new List<Result> { EditResult(query.SecondToEndSearch) };
-                        return result;
+                        return new List<Result> { EditResult(query.SecondToEndSearch) };
                     }
                 case TodoCommand.L:
                     return Search(query.SecondToEndSearch);
