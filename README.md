@@ -6,7 +6,7 @@ This was project was originally forked to add ability to toggle todo completions
 Updated .NET framework to latest version utilized by Flow-Launcher
 Updated NuGet packages which resolved high severity vulnerability
 ### Optimized Codebase
-Restructured entire codebase for optimized performance, readability, and maintainability 
+Restructured codebase for optimized performance, readability, and maintainability 
 ### New Capabilities
 Added uncheck capability so todos marked completed can be marked uncompleted
 Added editing capbility for existing todo items allowing user to tweak todo descriptions as needed
