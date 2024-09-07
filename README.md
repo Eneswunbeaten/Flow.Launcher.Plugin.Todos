@@ -3,15 +3,15 @@ Reason for Forking Source
 This was project was originally forked to add ability to toggle todo completions on and off which seemed like a simple tweak. The source project appeared to be quite stale so forking seemed the best option. This forked version includes updated NuGet packages as well as .NET framework. The source project contains outdated NuGet packages, one of which has a high severity vulnerability. After adding in the missing capability to uncheck completed items, many more improvements were added as described below.
 
 ### Updated Backend
-Updated .NET framework to latest version utilized by Flow-Launcher
-Updated NuGet packages which resolved high severity vulnerability
+- Updated .NET framework to latest version utilized by Flow-Launcher
+- Updated NuGet packages which resolved high severity vulnerability
 ### Optimized Codebase
-Restructured codebase for optimized performance, readability, and maintainability 
+- Restructured codebase for optimized performance, readability, and maintainability 
 ### New Capabilities
-Added uncheck capability so todos marked completed can be marked uncompleted
-Added editing capbility for existing todo items allowing user to tweak todo descriptions as needed
+- Added uncheck capability so todos marked completed can be marked uncompleted
+- Added editing capbility for existing todo items allowing user to tweak todo descriptions as needed
 ### Improved Behavior
-Rather than clearing commands each time add, complete, remove, or uncheck is performed, the corresponding action is retained allowing for quick repeat actions (i.e., adding/completing/removing/unchecking multiple items can be performed in quick succession)
+- Rather than clearing commands each time add, complete, remove, or uncheck is performed, the corresponding action is retained allowing for quick repeat actions (i.e., adding/completing/removing/unchecking multiple items can be performed in quick succession)
 
 Original ReadMe from forked source
 --------------------------
