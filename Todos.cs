@@ -33,7 +33,7 @@ namespace Wox.Plugin.Todos
         public List<Result> Results => ToResults(_todoList);
 
         // Private Properties
-        private int MaxId => _todoList?.Max(t => t.Id) ?? 0;
+        private int MaxId => (_todoList?.Any() == true) ? _todoList.Max(t => t.Id) : 0;
 
         // Constructor
         public Todos(PluginInitContext context, Settings setting)
