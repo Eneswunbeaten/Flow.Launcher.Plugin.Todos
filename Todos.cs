@@ -6,7 +6,7 @@ using System.Windows;
 using Flow.Launcher.Plugin;
 using Newtonsoft.Json;
 
-namespace Wox.Plugin.Todos
+namespace Flow.Launcher.Plugin.Todos
 {
     // Represents a single Todo item
     public class Todo

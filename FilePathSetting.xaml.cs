@@ -1,7 +1,8 @@
 using System.Windows;
 using System.Windows.Forms;
+using Flow.Launcher.Plugin;
 
-namespace Wox.Plugin.Todos
+namespace Flow.Launcher.Plugin.Todos
 {
     /// <summary>
     /// Interaction logic for FilePathSetting.xaml

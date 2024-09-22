@@ -1,4 +1,4 @@
-namespace Wox.Plugin.Todos
+namespace Flow.Launcher.Plugin.Todos
 {
     public class Settings
     {

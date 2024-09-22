@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin;
 
-namespace Wox.Plugin.Todos
+namespace Flow.Launcher.Plugin.Todos
 {
     public class Main : IPlugin, ISettingProvider
     {

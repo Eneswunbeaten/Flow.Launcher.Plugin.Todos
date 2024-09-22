@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wox.Plugin.Todos", "Wox.Plugin.Todos.csproj", "{96D88EE1-53CD-4FE6-A81B-5B807F0F8B5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.Todos", "Flow.Launcher.Plugin.Todos.csproj", "{96D88EE1-53CD-4FE6-A81B-5B807F0F8B5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Wox.Plugin.Todos
+namespace Flow.Launcher.Plugin.Todos
 {
     public enum TodoCommand
     {
