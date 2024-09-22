@@ -1,4 +1,3 @@
-using Flow.Launcher.Infrastructure.Storage;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -10,14 +9,12 @@ namespace Wox.Plugin.Todos
     public partial class FilePathSetting
     {
         private Settings _setting;
-        private PluginJsonStorage<Settings> _storage;
 
-        public FilePathSetting(Settings setting, PluginJsonStorage<Settings> storage)
+        public FilePathSetting(Settings setting)
         {
             InitializeComponent();
             _setting = setting;
             Directory.Text = _setting.FolderPath;
-            _storage = storage;
         }
 
         private void ChooseBtn_Click(object sender, RoutedEventArgs e)
@@ -29,7 +26,6 @@ namespace Wox.Plugin.Todos
                 var path = dialog.SelectedPath;
                 Directory.Text = path;
                 _setting.FolderPath = path;
-                _storage.Save();
             }
         }
     }

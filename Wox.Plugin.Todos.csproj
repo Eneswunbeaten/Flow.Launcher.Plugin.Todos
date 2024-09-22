@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net7.0-windows7.0</TargetFramework>
@@ -21,11 +21,6 @@
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Flow.Launcher.Infrastructure">
-      <HintPath>Flow.Launcher.Infrastructure.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="plugin.json">

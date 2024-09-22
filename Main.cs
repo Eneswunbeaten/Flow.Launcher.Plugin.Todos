@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin;
-using Flow.Launcher.Infrastructure.Storage;
 
 namespace Wox.Plugin.Todos
 {
-    public class Main : IPlugin, ISettingProvider, Flow.Launcher.Plugin.ISavable
+    public class Main : IPlugin, ISettingProvider
     {
         private static Todos _todos;
         private static Todo _todo_to_edit = null;
-        private readonly PluginJsonStorage<Settings> _storage;
-        private readonly Settings _setting;
+        internal Settings _setting;
 
-        public Main()
+          public void Init(PluginInitContext context)
         {
-            _storage = new PluginJsonStorage<Settings>();
-            _setting = _storage.Load();
+            _setting = context.API.LoadSettingJsonStorage<Settings>();
+            _todos = new Todos(context, _setting);
+        }
+
+        public Control CreateSettingPanel()
+        {
+            return new FilePathSetting(_setting);
         }
 
         public List<Result> Query(Query query)
@@ -82,21 +85,6 @@ namespace Wox.Plugin.Todos
                 default:
                     return Search(query.Search, t => !t.Completed);
             }
-        }
-
-        public void Init(PluginInitContext context)
-        {
-            _todos = new Todos(context, _setting);
-        }
-
-        public Control CreateSettingPanel()
-        {
-            return new FilePathSetting(_setting, _storage);
-        }
-
-        public void Save()
-        {
-            _storage.Save();
         }
 
         private List<Result> Search(string search, Func<Todo, bool> conditions = null)
