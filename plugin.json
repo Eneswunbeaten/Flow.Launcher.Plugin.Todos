@@ -4,7 +4,7 @@
   "Name": "Todos",
   "Description": "A simple todo app.",
   "Author": "Or1g3n (originally by caoyue)",
-  "Version": "3.0.1",
+  "Version": "3.0.2",
   "Language": "csharp",
   "Website": "https://github.com/chrisnicholas90/Wox.Plugin.Todos",
   "ExecuteFileName": "Wox.Plugin.Todos.dll",
