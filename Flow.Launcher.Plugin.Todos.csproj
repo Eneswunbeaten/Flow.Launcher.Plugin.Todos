@@ -8,15 +8,21 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>Output\Debug\Wox.Plugin.Todos</OutputPath>
+    <OutputPath>Output\Debug\Flow.Launcher.Plugin.Todos</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>Output\Release\Wox.Plugin.Todos</OutputPath>
+    <OutputPath>Output\Release\Flow.Launcher.Plugin.Todos</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ico\*.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Output\**" />
+    <EmbeddedResource Remove="Output\**" />
+    <None Remove="Output\**" />
+    <Page Remove="Output\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
