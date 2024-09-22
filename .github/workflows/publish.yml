@@ -25,13 +25,13 @@ jobs:
       - run: echo ${{steps.version.outputs.prop}} 
       - name: Build
         run: |
-          dotnet publish 'Wox.Plugin.Todos.csproj' --framework net7.0-windows7.0 -c Release -o "Wox.Plugin.Todos"
-          7z a -tzip "Wox.Plugin.Todos.zip" "./Wox.Plugin.Todos/*"
-          rm -r "Wox.Plugin.Todos"
+          dotnet publish 'Flow.Launcher.Plugin.Todos.csproj' --framework net7.0-windows7.0 -c Release -o "Flow.Launcher.Plugin.Todos"
+          7z a -tzip "Flow.Launcher.Plugin.Todos.zip" "./Flow.Launcher.Plugin.Todos/*"
+          rm -r "Flow.Launcher.Plugin.Todos"
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "Wox.Plugin.Todos.zip"
+          files: "Flow.Launcher.Plugin.Todos.zip"
           tag_name: "v${{steps.version.outputs.prop}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
