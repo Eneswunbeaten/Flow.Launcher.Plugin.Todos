@@ -56,6 +56,8 @@ namespace Flow.Launcher.Plugin.Todos
                     return HandleComplete(query);
                 case TodoCommand.R:
                     return HandleRemove(query);
+                case TodoCommand.S:
+                    return HandleSort(query);
                 case TodoCommand.A:
                     return new List<Result> { AddResult(query.SecondToEndSearch) };
                 case TodoCommand.E:
@@ -247,6 +249,83 @@ namespace Flow.Launcher.Plugin.Todos
                     _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -e {t.Content}", true);
                     return false;
                 });
+        }
+
+        private List<Result> HandleSort(Query query)
+        {
+            if (query.SecondSearch.Equals("--aa", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Sort todos alphabetical ascending?",
+                        SubTitle = "Click to sort todos alphabetical ascending",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.SetSortOption(SortOption.AlphabeticalAscending);
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+            else if (query.SecondSearch.Equals("--ad", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Sort todos alphabetical descending?",
+                        SubTitle = "Click to sort todos alphabetical descending",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.SetSortOption(SortOption.AlphabeticalDescending);
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                }; ;
+            }
+            else if (query.SecondSearch.Equals("--ta", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Sort todos time ascending?",
+                        SubTitle = "Click to sort todos time ascending",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.SetSortOption(SortOption.TimeAscending);
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+            else if (query.SecondSearch.Equals("--td", StringComparison.OrdinalIgnoreCase))
+            {
+                return new List<Result> {
+                    new Result {
+                        Title = "Sort todos time descending?",
+                        SubTitle = "Click to sort todos time descending",
+                        IcoPath = _todos.GetFilePath(),
+                        Action = c => {
+                            _todos.SetSortOption(SortOption.TimeDescending);
+                            _todos.Context.API.ChangeQuery($"{query.ActionKeyword} ", true);
+                            return false;
+                        }
+                    }
+                };
+            }
+
+            // If invalid sort option get sorting options from Help.Show
+            var sortOptions = new List<Result>();
+            var help = new Help(_todos.Context, query);
+            // Assuming Help.Show is accessible an
+            foreach (var result in help.Show)
+            {
+                if (result.Title.StartsWith($"{query.ActionKeyword} -s", StringComparison.OrdinalIgnoreCase))
+                {
+                    sortOptions.Add(result);
+                }
+            }
+            return sortOptions;
         }
     }
 }

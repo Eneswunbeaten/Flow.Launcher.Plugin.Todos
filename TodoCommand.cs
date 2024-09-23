@@ -8,7 +8,7 @@ namespace Flow.Launcher.Plugin.Todos
         A,
         [Description("Complete")]
         C,
-        [Description("Edit")] // TODO  
+        [Description("Edit")]
         E,
         [Description("Help")]
         H,
@@ -18,6 +18,8 @@ namespace Flow.Launcher.Plugin.Todos
         Rl,
         [Description("Remove")]
         R,
+        [Description("Sort")]
+        S,
         [Description("Uncheck")]
         U
     }

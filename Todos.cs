@@ -17,6 +17,14 @@ namespace Flow.Launcher.Plugin.Todos
         public DateTime CreatedTime { get; set; }
     }
 
+    public enum SortOption
+    {
+        AlphabeticalAscending,
+        AlphabeticalDescending,
+        TimeAscending,
+        TimeDescending
+    }
+
     // Manages a collection of Todo items
     public class Todos
     {
@@ -34,6 +42,7 @@ namespace Flow.Launcher.Plugin.Todos
 
         // Private Properties
         private int MaxId => (_todoList?.Any() == true) ? _todoList.Max(t => t.Id) : 0;
+        private SortOption _currentSortOption = SortOption.TimeDescending; // Default to time descending
 
         // Constructor
         public Todos(PluginInitContext context, Settings setting)
@@ -96,6 +105,12 @@ namespace Flow.Launcher.Plugin.Todos
             Context.API.ShowMsg(title, content, GetFilePath());
         }
 
+        // Sorting todos list
+        public void SetSortOption(SortOption sortOption)
+        {
+            _currentSortOption = sortOption;
+        }
+
         // Methods for Generating Results
         private bool PerformDefaultAction(Todo todo)
         {
@@ -140,7 +155,26 @@ namespace Flow.Launcher.Plugin.Todos
 
         private List<Result> ToResults(IEnumerable<Todo> todos, Func<Todo, string> subTitleFormatter = null, Func<ActionContext, Todo, bool> itemAction = null)
         {
-            var results = todos.OrderByDescending(t => t.CreatedTime)
+            // Apply sorting directly to the 'todos' parameter
+            switch (_currentSortOption)
+            {
+                case SortOption.AlphabeticalAscending:
+                    todos = todos.OrderBy(t => t.Content);
+                    break;
+                case SortOption.AlphabeticalDescending:
+                    todos = todos.OrderByDescending(t => t.Content);
+                    break;
+                case SortOption.TimeAscending:
+                    todos = todos.OrderBy(t => t.CreatedTime);
+                    break;
+                case SortOption.TimeDescending:
+                    todos = todos.OrderByDescending(t => t.CreatedTime);
+                    break;
+                default:
+                    break; // If no sorting option is set, 'todos' remains unchanged
+            }
+
+            var results = todos
                 .Select(t => new Result
                 {
                     Title = t.Content,

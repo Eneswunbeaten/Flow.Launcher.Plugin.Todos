@@ -75,6 +75,26 @@ namespace Flow.Launcher.Plugin.Todos
                     query: $"{_query.ActionKeyword} -rl"
                 ),
                 CreateResult(
+                    title: $"{_query.ActionKeyword} -s --aa",
+                    subtitle: "Sort todos alphabetical ascending",
+                    query: $"{_query.ActionKeyword} -s --aa"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -s --ad",
+                    subtitle: "Sort todos alphabetical descending",
+                    query: $"{_query.ActionKeyword} -s --ad"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -s --ta",
+                    subtitle: "Sort todos time ascending",
+                    query: $"{_query.ActionKeyword} -s --ta"
+                ),
+                CreateResult(
+                    title: $"{_query.ActionKeyword} -s --td",
+                    subtitle: "Sort todos time descending",
+                    query: $"{_query.ActionKeyword} -s --td"
+                ),
+                CreateResult(
                     title: $"{_query.ActionKeyword} -l [keyword]",
                     subtitle: "List all todos, including completed ones",
                     query: $"{_query.ActionKeyword} -l [keyword]"
