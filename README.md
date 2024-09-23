@@ -10,6 +10,7 @@ This was project was originally forked to add ability to toggle todo completions
 ### New Capabilities
 - Added uncheck ( -u ) capability so todos marked completed can be marked uncompleted
 - Added editing ( -e ) capability for existing todo items allowing user to tweak todo descriptions as needed
+- Added sorting ( -s ) capability allowing user to specify todos sort order ( alphabetical asc/desc, time asc/desc)
 ### Improved Behavior
 - Rather than clearing commands each time add, complete, remove, or uncheck is performed, the corresponding action is retained allowing for quick repeat actions (i.e., adding/completing/removing/unchecking multiple items can be performed in quick succession)
 
