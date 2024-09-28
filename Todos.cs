@@ -160,16 +160,24 @@ namespace Flow.Launcher.Plugin.Todos
             switch (_currentSortOption)
             {
                 case SortOption.AlphabeticalAscending:
-                    todos = todos.OrderBy(t => t.Content);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenBy(t => t.Content);
                     break;
                 case SortOption.AlphabeticalDescending:
-                    todos = todos.OrderByDescending(t => t.Content);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenByDescending(t => t.Content);
                     break;
                 case SortOption.TimeAscending:
-                    todos = todos.OrderBy(t => t.CreatedTime);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenBy(t => t.CreatedTime);
                     break;
                 case SortOption.TimeDescending:
-                    todos = todos.OrderByDescending(t => t.CreatedTime);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenByDescending(t => t.CreatedTime);
                     break;
                 default:
                     break; // If no sorting option is set, 'todos' remains unchanged
@@ -182,9 +190,10 @@ namespace Flow.Launcher.Plugin.Todos
             var results = todos
                 .Select(t =>
                 {
+                    var icon = t.Pinned ? "\U0001F4CC " : ""; // Set icon to pin unicode if pinned
                     var result = new Result
                     {
-                        Title = t.Content,
+                        Title = $"{icon}{t.Content}", // Add pin icon to title if t.Pinned = true
                         SubTitle = subTitleFormatter?.Invoke(t) ?? $"{ToRelativeTime(t.CreatedTime)} | Copy to clipboard",
                         IcoPath = GetFilePath(t.Completed ? @"ico\done.png" : @"ico\todo.png"),
                         Score = score,
