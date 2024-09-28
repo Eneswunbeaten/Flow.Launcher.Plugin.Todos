@@ -174,16 +174,27 @@ namespace Flow.Launcher.Plugin.Todos
                     break; // If no sorting option is set, 'todos' remains unchanged
             }
 
+            // Start the scoring system with very large value and then decrement in order to enforce order in light of flows autoranking system
+            int score = 1000000000;
+            const int scoreDecrement = 1000000;
+
             var results = todos
-                .Select(t => new Result
+                .Select(t =>
                 {
-                    Title = t.Content,
-                    SubTitle = subTitleFormatter?.Invoke(t) ?? $"{ToRelativeTime(t.CreatedTime)} | Copy to clipboard",
-                    IcoPath = GetFilePath(t.Completed ? @"ico\done.png" : @"ico\todo.png"),
-                    Action = c =>
+                    var result = new Result
                     {
-                        return itemAction?.Invoke(c, t) ?? PerformDefaultAction(t);
-                    }
+                        Title = t.Content,
+                        SubTitle = subTitleFormatter?.Invoke(t) ?? $"{ToRelativeTime(t.CreatedTime)} | Copy to clipboard",
+                        IcoPath = GetFilePath(t.Completed ? @"ico\done.png" : @"ico\todo.png"),
+                        Score = score,
+                        Action = c =>
+                        {
+                            return itemAction?.Invoke(c, t) ?? PerformDefaultAction(t);
+                        }
+                    };
+
+                    score -= scoreDecrement; // Decrease score after each result
+                    return result;
                 }).ToList();
 
             if (!results.Any())
