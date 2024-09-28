@@ -51,6 +51,8 @@ namespace Flow.Launcher.Plugin.Todos
                 ($"{_query.ActionKeyword} -u [keyword]", "Uncheck a completed todo item matching the keyword", $"{_query.ActionKeyword} -u [keyword]"),
                 ($"{_query.ActionKeyword} -u --all", "Uncheck all completed todos", $"{_query.ActionKeyword} -u --all"),
                 ($"{_query.ActionKeyword} -e [keyword]", "Edit an existing todo item matching the keyword", $"{_query.ActionKeyword} -e [keyword]"),
+                ($"{_query.ActionKeyword} -p [keyword]", "Pin to top an uncompleted todo item matching the keyword", $"{_query.ActionKeyword} -p [keyword]"),
+                ($"{_query.ActionKeyword} -p --u [keyword]", "Unpin a todo item matching the keyword", $"{_query.ActionKeyword} -p --u [keyword]"),
                 ($"{_query.ActionKeyword} -r [keyword]", "Remove todos matching the keyword", $"{_query.ActionKeyword} -r [keyword]"),
                 ($"{_query.ActionKeyword} -r --all", "Remove all todos", $"{_query.ActionKeyword} -r --all"),
                 ($"{_query.ActionKeyword} -r --done", "Remove all completed todos", $"{_query.ActionKeyword} -r --done"),

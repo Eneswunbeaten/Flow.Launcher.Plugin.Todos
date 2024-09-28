@@ -14,6 +14,7 @@ namespace Flow.Launcher.Plugin.Todos
         public int Id { get; set; }
         public string Content { get; set; }
         public bool Completed { get; set; }
+        public bool Pinned { get; set; }
         public DateTime CreatedTime { get; set; }
     }
 
@@ -314,6 +315,30 @@ namespace Flow.Launcher.Plugin.Todos
                 Save();
                 callback?.Invoke();
                 Context.API.ChangeQuery($"{ActionKeyword} ");
+            }
+            return this;
+        }
+
+        public Todos Pin(Todo todo, Action callback = null)
+        {
+            var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
+            if (item != null)
+            {
+                item.Pinned = true;
+                Save();
+                callback?.Invoke();
+            }
+            return this;
+        }
+
+        public Todos UnPin(Todo todo, Action callback = null)
+        {
+            var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
+            if (item != null)
+            {
+                item.Pinned = false;
+                Save();
+                callback?.Invoke();
             }
             return this;
         }
