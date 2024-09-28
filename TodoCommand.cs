@@ -14,6 +14,8 @@ namespace Flow.Launcher.Plugin.Todos
         H,
         [Description("List")]
         L,
+        [Description("Pin")]
+        P,
         [Description("Reload")]
         Rl,
         [Description("Remove")]

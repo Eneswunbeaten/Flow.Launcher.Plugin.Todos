@@ -14,6 +14,7 @@ namespace Flow.Launcher.Plugin.Todos
         public int Id { get; set; }
         public string Content { get; set; }
         public bool Completed { get; set; }
+        public bool Pinned { get; set; }
         public DateTime CreatedTime { get; set; }
     }
 
@@ -159,31 +160,51 @@ namespace Flow.Launcher.Plugin.Todos
             switch (_currentSortOption)
             {
                 case SortOption.AlphabeticalAscending:
-                    todos = todos.OrderBy(t => t.Content);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenBy(t => t.Content);
                     break;
                 case SortOption.AlphabeticalDescending:
-                    todos = todos.OrderByDescending(t => t.Content);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenByDescending(t => t.Content);
                     break;
                 case SortOption.TimeAscending:
-                    todos = todos.OrderBy(t => t.CreatedTime);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenBy(t => t.CreatedTime);
                     break;
                 case SortOption.TimeDescending:
-                    todos = todos.OrderByDescending(t => t.CreatedTime);
+                    todos = todos
+                        .OrderByDescending(t => t.Pinned) // Pinned items first
+                        .ThenByDescending(t => t.CreatedTime);
                     break;
                 default:
                     break; // If no sorting option is set, 'todos' remains unchanged
             }
 
+            // Start the scoring system with very large value and then decrement in order to enforce order in light of flows autoranking system
+            int score = 1000000000;
+            const int scoreDecrement = 1000000;
+
             var results = todos
-                .Select(t => new Result
+                .Select(t =>
                 {
-                    Title = t.Content,
-                    SubTitle = subTitleFormatter?.Invoke(t) ?? $"{ToRelativeTime(t.CreatedTime)} | Copy to clipboard",
-                    IcoPath = GetFilePath(t.Completed ? @"ico\done.png" : @"ico\todo.png"),
-                    Action = c =>
+                    var icon = t.Pinned ? "\U0001F4CC " : ""; // Set icon to pin unicode if pinned
+                    var result = new Result
                     {
-                        return itemAction?.Invoke(c, t) ?? PerformDefaultAction(t);
-                    }
+                        Title = $"{icon}{t.Content}", // Add pin icon to title if t.Pinned = true
+                        SubTitle = subTitleFormatter?.Invoke(t) ?? $"{ToRelativeTime(t.CreatedTime)} | Copy to clipboard",
+                        IcoPath = GetFilePath(t.Completed ? @"ico\done.png" : @"ico\todo.png"),
+                        Score = score,
+                        Action = c =>
+                        {
+                            return itemAction?.Invoke(c, t) ?? PerformDefaultAction(t);
+                        }
+                    };
+
+                    score -= scoreDecrement; // Decrease score after each result
+                    return result;
                 }).ToList();
 
             if (!results.Any())
@@ -303,6 +324,30 @@ namespace Flow.Launcher.Plugin.Todos
                 Save();
                 callback?.Invoke();
                 Context.API.ChangeQuery($"{ActionKeyword} ");
+            }
+            return this;
+        }
+
+        public Todos Pin(Todo todo, Action callback = null)
+        {
+            var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
+            if (item != null)
+            {
+                item.Pinned = true;
+                Save();
+                callback?.Invoke();
+            }
+            return this;
+        }
+
+        public Todos UnPin(Todo todo, Action callback = null)
+        {
+            var item = _todoList.FirstOrDefault(t => t.Id == todo.Id);
+            if (item != null)
+            {
+                item.Pinned = false;
+                Save();
+                callback?.Invoke();
             }
             return this;
         }

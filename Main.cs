@@ -54,6 +54,8 @@ namespace Flow.Launcher.Plugin.Todos
                     return HandleUncheck(query);
                 case TodoCommand.C:
                     return HandleComplete(query);
+                case TodoCommand.P:
+                    return HandlePin(query);
                 case TodoCommand.R:
                     return HandleRemove(query);
                 case TodoCommand.S:
@@ -115,6 +117,7 @@ namespace Flow.Launcher.Plugin.Todos
                     {
                         Content = content,
                         Completed = false,
+                        Pinned = false,
                         CreatedTime = DateTime.Now
                     });
                     return false;
@@ -190,6 +193,30 @@ namespace Flow.Launcher.Plugin.Todos
                 (c, t) => {
                     _todos.Complete(t);
                     _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -c ", true);
+                    return false;
+                });
+        }
+
+        private List<Result> HandlePin(Query query)
+        {
+            if (query.SecondSearch.Equals("--u", StringComparison.OrdinalIgnoreCase))
+            {
+                return _todos.Find(
+                    t => t.Content.IndexOf(query.ThirdSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed && t.Pinned,
+                    t => "Click to unpin todo",
+                    (c, t) => {
+                        _todos.UnPin(t);
+                        _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -p --u ", true);
+                        return false;
+                    });
+            }
+
+            return _todos.Find(
+                t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed && !t.Pinned,
+                t => "Click to pin todo",
+                (c, t) => {
+                    _todos.Pin(t);
+                    _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -p ", true);
                     return false;
                 });
         }
