@@ -38,105 +38,37 @@ namespace Flow.Launcher.Plugin.Todos
 
         private List<Result> GetHelpResults()
         {
-            var results = new List<Result>
+            const int baseScore = 1000000000;
+            const int scoreDecrement = 1000000;
+
+            var commands = new (string title, string subtitle, string query)[]
             {
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -a [text]",
-                    subtitle: "Add a new todo item",
-                    query: $"{_query.ActionKeyword} -a [text]",
-                    score: 1000000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -c [keyword]",
-                    subtitle: "Complete a todo item matching the keyword",
-                    query: $"{_query.ActionKeyword} -c [keyword]",
-                    score: 999000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -c --all",
-                    subtitle: "Complete all todos",
-                    query: $"{_query.ActionKeyword} -c --all",
-                    score: 998000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -u [keyword]",
-                    subtitle: "Uncheck a completed todo item matching the keyword",
-                    query: $"{_query.ActionKeyword} -u [keyword]",
-                    score: 997000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -u --all",
-                    subtitle: "Uncheck all completed todos",
-                    query: $"{_query.ActionKeyword} -u --all",
-                    score: 996000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -e [keyword]",
-                    subtitle: "Edit an existing todo item matching the keyword",
-                    query: $"{_query.ActionKeyword} -e [keyword]",
-                    score: 995000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -r [keyword]",
-                    subtitle: "Remove todos matching the keyword",
-                    query: $"{_query.ActionKeyword} -r [keyword]",
-                    score: 994000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -r --all",
-                    subtitle: "Remove all todos",
-                    query: $"{_query.ActionKeyword} -r --all",
-                    score: 993000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -r --done",
-                    subtitle: "Remove all completed todos",
-                    query: $"{_query.ActionKeyword} -r --done",
-                    score: 992000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -rl",
-                    subtitle: "Reload todos from the data file",
-                    query: $"{_query.ActionKeyword} -rl",
-                    score: 991000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -s --aa",
-                    subtitle: "Sort todos alphabetical ascending",
-                    query: $"{_query.ActionKeyword} -s --aa",
-                    score: 990000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -s --ad",
-                    subtitle: "Sort todos alphabetical descending",
-                    query: $"{_query.ActionKeyword} -s --ad",
-                    score: 989000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -s --ta",
-                    subtitle: "Sort todos time ascending",
-                    query: $"{_query.ActionKeyword} -s --ta",
-                    score: 988000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -s --td",
-                    subtitle: "Sort todos time descending",
-                    query: $"{_query.ActionKeyword} -s --td",
-                    score: 987000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} -l [keyword]",
-                    subtitle: "List all todos, including completed ones",
-                    query: $"{_query.ActionKeyword} -l [keyword]",
-                    score: 986000000
-                ),
-                CreateResult(
-                    title: $"{_query.ActionKeyword} [keyword]",
-                    subtitle: "List todos matching the keyword",
-                    query: $"{_query.ActionKeyword} [keyword]",
-                    score: 985000000
-                )
+                ($"{_query.ActionKeyword} [keyword]", "List todos matching the keyword", $"{_query.ActionKeyword} [keyword]"),
+                ($"{_query.ActionKeyword} -l [keyword]", "List all todos, including completed ones", $"{_query.ActionKeyword} -l [keyword]"),
+                ($"{_query.ActionKeyword} -a [text]", "Add a new todo item", $"{_query.ActionKeyword} -a [text]"),
+                ($"{_query.ActionKeyword} -c [keyword]", "Complete a todo item matching the keyword", $"{_query.ActionKeyword} -c [keyword]"),
+                ($"{_query.ActionKeyword} -c --all", "Complete all todos", $"{_query.ActionKeyword} -c --all"),
+                ($"{_query.ActionKeyword} -u [keyword]", "Uncheck a completed todo item matching the keyword", $"{_query.ActionKeyword} -u [keyword]"),
+                ($"{_query.ActionKeyword} -u --all", "Uncheck all completed todos", $"{_query.ActionKeyword} -u --all"),
+                ($"{_query.ActionKeyword} -e [keyword]", "Edit an existing todo item matching the keyword", $"{_query.ActionKeyword} -e [keyword]"),
+                ($"{_query.ActionKeyword} -r [keyword]", "Remove todos matching the keyword", $"{_query.ActionKeyword} -r [keyword]"),
+                ($"{_query.ActionKeyword} -r --all", "Remove all todos", $"{_query.ActionKeyword} -r --all"),
+                ($"{_query.ActionKeyword} -r --done", "Remove all completed todos", $"{_query.ActionKeyword} -r --done"),
+                ($"{_query.ActionKeyword} -rl", "Reload todos from the data file", $"{_query.ActionKeyword} -rl"),
+                ($"{_query.ActionKeyword} -s --aa", "Sort todos alphabetical ascending", $"{_query.ActionKeyword} -s --aa"),
+                ($"{_query.ActionKeyword} -s --ad", "Sort todos alphabetical descending", $"{_query.ActionKeyword} -s --ad"),
+                ($"{_query.ActionKeyword} -s --ta", "Sort todos time ascending", $"{_query.ActionKeyword} -s --ta"),
+                ($"{_query.ActionKeyword} -s --td", "Sort todos time descending", $"{_query.ActionKeyword} -s --td"),
             };
+
+            var results = new List<Result>();
+            int currentScore = baseScore;
+
+            foreach (var (title, subtitle, query) in commands)
+            {
+                results.Add(CreateResult(title, subtitle, query, currentScore));
+                currentScore -= scoreDecrement; // Decrement the score after each addition
+            }
 
             return results;
         }
