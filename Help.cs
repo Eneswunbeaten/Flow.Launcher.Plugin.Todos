@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Flow.Launcher.Plugin;
 using Flow.Launcher.Plugin.SharedModels;
 
@@ -36,24 +37,25 @@ namespace Flow.Launcher.Plugin.Todos
 
         public List<Result> Show => GetHelpResults();
 
-        private List<Result> GetHelpResults()
+        public List<Result> GetHelpResults(string searchTerm = "")
         {
             const int baseScore = 1000000000;
             const int scoreDecrement = 1000000;
 
             var commands = new (string title, string subtitle, string query)[]
             {
-                ($"{_query.ActionKeyword} [keyword]", "List todos matching the keyword", $"{_query.ActionKeyword} [keyword]"),
-                ($"{_query.ActionKeyword} -l [keyword]", "List all todos, including completed ones", $"{_query.ActionKeyword} -l [keyword]"),
-                ($"{_query.ActionKeyword} -a [text]", "Add a new todo item", $"{_query.ActionKeyword} -a [text]"),
-                ($"{_query.ActionKeyword} -c [keyword]", "Complete a todo item matching the keyword", $"{_query.ActionKeyword} -c [keyword]"),
+                ($"{_query.ActionKeyword} -h [keyword]", "Show help and filter available commands on keyword", $"{_query.ActionKeyword} -h "),
+                ($"{_query.ActionKeyword} [keyword]", "List todos matching the keyword", $"{_query.ActionKeyword}"),
+                ($"{_query.ActionKeyword} -l [keyword]", "List all todos, including completed ones", $"{_query.ActionKeyword} -l "),
+                ($"{_query.ActionKeyword} -a [text]", "Add a new todo item", $"{_query.ActionKeyword} -a "),
+                ($"{_query.ActionKeyword} -c [keyword]", "Complete a todo item matching the keyword", $"{_query.ActionKeyword} -c "),
                 ($"{_query.ActionKeyword} -c --all", "Complete all todos", $"{_query.ActionKeyword} -c --all"),
-                ($"{_query.ActionKeyword} -u [keyword]", "Uncheck a completed todo item matching the keyword", $"{_query.ActionKeyword} -u [keyword]"),
+                ($"{_query.ActionKeyword} -u [keyword]", "Uncheck a completed todo item matching the keyword", $"{_query.ActionKeyword} -u "),
                 ($"{_query.ActionKeyword} -u --all", "Uncheck all completed todos", $"{_query.ActionKeyword} -u --all"),
-                ($"{_query.ActionKeyword} -e [keyword]", "Edit an existing todo item matching the keyword", $"{_query.ActionKeyword} -e [keyword]"),
-                ($"{_query.ActionKeyword} -p [keyword]", "Pin to top an uncompleted todo item matching the keyword", $"{_query.ActionKeyword} -p [keyword]"),
-                ($"{_query.ActionKeyword} -p --u [keyword]", "Unpin a todo item matching the keyword", $"{_query.ActionKeyword} -p --u [keyword]"),
-                ($"{_query.ActionKeyword} -r [keyword]", "Remove todos matching the keyword", $"{_query.ActionKeyword} -r [keyword]"),
+                ($"{_query.ActionKeyword} -e [keyword]", "Edit an existing todo item matching the keyword", $"{_query.ActionKeyword} -e "),
+                ($"{_query.ActionKeyword} -p [keyword]", "Pin to top an uncompleted todo item matching the keyword", $"{_query.ActionKeyword} -p "),
+                ($"{_query.ActionKeyword} -p --u [keyword]", "Unpin a todo item matching the keyword", $"{_query.ActionKeyword} -p --u "),
+                ($"{_query.ActionKeyword} -r [keyword]", "Remove todos matching the keyword", $"{_query.ActionKeyword} -r "),
                 ($"{_query.ActionKeyword} -r --all", "Remove all todos", $"{_query.ActionKeyword} -r --all"),
                 ($"{_query.ActionKeyword} -r --done", "Remove all completed todos", $"{_query.ActionKeyword} -r --done"),
                 ($"{_query.ActionKeyword} -rl", "Reload todos from the data file", $"{_query.ActionKeyword} -rl"),
@@ -68,8 +70,11 @@ namespace Flow.Launcher.Plugin.Todos
 
             foreach (var (title, subtitle, query) in commands)
             {
-                results.Add(CreateResult(title, subtitle, query, currentScore));
-                currentScore -= scoreDecrement; // Decrement the score after each addition
+                if (subtitle.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || searchTerm == "")
+                {
+                    results.Add(CreateResult(title, subtitle, query, currentScore));
+                    currentScore -= scoreDecrement; // Decrement the score after each addition
+                }
             }
 
             return results;

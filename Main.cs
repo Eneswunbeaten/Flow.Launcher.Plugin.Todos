@@ -49,7 +49,7 @@ namespace Flow.Launcher.Plugin.Todos
             switch (op)
             {
                 case TodoCommand.H:
-                    return help.Show;
+                    return help.GetHelpResults(query.SecondToEndSearch);
                 case TodoCommand.U:
                     return HandleUncheck(query);
                 case TodoCommand.C:
@@ -344,7 +344,7 @@ namespace Flow.Launcher.Plugin.Todos
             // If invalid sort option get sorting options from Help.Show
             var sortOptions = new List<Result>();
             var help = new Help(_todos.Context, query);
-            // Assuming Help.Show is accessible an
+
             foreach (var result in help.Show)
             {
                 if (result.Title.StartsWith($"{query.ActionKeyword} -s", StringComparison.OrdinalIgnoreCase))
