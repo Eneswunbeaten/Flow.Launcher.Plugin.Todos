@@ -158,6 +158,21 @@ namespace Flow.Launcher.Plugin.Todos
                     }
                 };
             }
+            else if (query.SecondSearch.Contains("-"))
+            {
+                // Show all secondary commands
+                var secondaryOptions = new List<Result>();
+                var help = new Help(_todos.Context, query);
+
+                foreach (var result in help.Show)
+                {
+                    if (result.Title.StartsWith($"{query.ActionKeyword} -u --", StringComparison.OrdinalIgnoreCase))
+                    {
+                        secondaryOptions.Add(result);
+                    }
+                }
+                return secondaryOptions;
+            }
 
             return _todos.Find(
                 t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && t.Completed,
@@ -186,6 +201,21 @@ namespace Flow.Launcher.Plugin.Todos
                     }
                 };
             }
+            else if (query.SecondSearch.Contains("-"))
+            {
+                // Show all secondary commands 
+                var secondaryOptions = new List<Result>();
+                var help = new Help(_todos.Context, query);
+
+                foreach (var result in help.Show)
+                {
+                    if (result.Title.StartsWith($"{query.ActionKeyword} -c --", StringComparison.OrdinalIgnoreCase))
+                    {
+                        secondaryOptions.Add(result);
+                    }
+                }
+                return secondaryOptions;
+            }
 
             return _todos.Find(
                 t => t.Content.IndexOf(query.SecondToEndSearch, StringComparison.OrdinalIgnoreCase) >= 0 && !t.Completed,
@@ -209,6 +239,21 @@ namespace Flow.Launcher.Plugin.Todos
                         _todos.Context.API.ChangeQuery($"{query.ActionKeyword} -p --u ", true);
                         return false;
                     });
+            }
+            else if (query.SecondSearch.Contains("-"))
+            {
+                // Show all secondary commands 
+                var secondaryOptions = new List<Result>();
+                var help = new Help(_todos.Context, query);
+
+                foreach (var result in help.Show)
+                {
+                    if (result.Title.StartsWith($"{query.ActionKeyword} -p --", StringComparison.OrdinalIgnoreCase))
+                    {
+                        secondaryOptions.Add(result);
+                    }
+                }
+                return secondaryOptions;
             }
 
             return _todos.Find(
@@ -238,8 +283,7 @@ namespace Flow.Launcher.Plugin.Todos
                     }
                 };
             }
-
-            if (query.SecondSearch.Equals("--done", StringComparison.OrdinalIgnoreCase))
+            else if (query.SecondSearch.Equals("--done", StringComparison.OrdinalIgnoreCase))
             {
                 return new List<Result> {
                     new Result {
@@ -253,6 +297,21 @@ namespace Flow.Launcher.Plugin.Todos
                         }
                     }
                 };
+            }
+            else if (query.SecondSearch.Contains("-"))
+            {
+                // Show all secondary commands 
+                var secondaryOptions = new List<Result>();
+                var help = new Help(_todos.Context, query);
+
+                foreach (var result in help.Show)
+                {
+                    if (result.Title.StartsWith($"{query.ActionKeyword} -r --", StringComparison.OrdinalIgnoreCase))
+                    {
+                        secondaryOptions.Add(result);
+                    }
+                }
+                return secondaryOptions;
             }
 
             return _todos.Find(
