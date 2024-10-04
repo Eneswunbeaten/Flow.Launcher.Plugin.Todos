@@ -19,13 +19,20 @@ A simple and efficient todo management plugin for Flow Launcher that allows user
 | Command        | Description |
 |----------------|-------------|
 | `td -h`        | Show help options. |
+| `td `          | List todos. |
+| `td -l`        | List all todos (including completed). |
 | `td -a`        | Add a new todo. |
-| `td -r`        | Remove a todo. |
 | `td -c`        | Complete a todo. |
+| `td -c --all`  | Complete all todos. |
 | `td -u`        | Uncheck (uncomplete) a todo. |
+| `td -u -all`   | Uncheck (uncomplete) all todos. |
 | `td -e`        | Edit an existing todo. |
 | `td -p`        | Pin a todo to the top. |
 | `td -p --u`    | Unpin a todo. |
+| `td -r`        | Remove a todo. |
+| `td -r --all`  | Remove all todos. |
+| `td -r --done` | Remove all completed todos. |
+| `td -rl`       | Reload todos from data file. |
 | `td -s --aa`   | Sort todos alphabetically (A-Z). |
 | `td -s --ad`   | Sort todos alphabetically (Z-A). |
 | `td -s --ta`   | Sort todos by time (oldest first). |
@@ -35,6 +42,7 @@ A simple and efficient todo management plugin for Flow Launcher that allows user
 - **Quick Access**: Pinned items stay at the top regardless of other sorting options.
 - **Efficient Workflows**: You can add and update multiple todos without clearing the command input.
 - **Filter Help**: You can filter through available commands using `td -h <search>` for quick lookup of specific help items.
+- **Sub-Commands**: To easily retrieve list of available sub-commands for a given todo action, simply type " -" after the initial command (e.g., `td -r -`). Note, you can also view available commands using `td -h`.
 - **Sync Across Devices**: Configure your todo storage folder in a cloud service like OneDrive, Dropbox, or Google Drive to sync todos file across all your devices.
 
 ## Contributing
