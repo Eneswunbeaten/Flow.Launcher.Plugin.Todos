@@ -40,7 +40,7 @@ A simple and efficient todo management plugin for Flow Launcher that allows user
 ## Contributing
 If you'd like to propose new features, improve existing ones, or report bugs, please open an issue or submit a pull request on this repository!
 
-### Original Wox.Plugin.Todos ReadMe
+## Original Wox.Plugin.Todos ReadMe
 -------------------
 Wox.Plugin.Todos
 --------------------------
