@@ -35,7 +35,7 @@ A simple and efficient todo management plugin for Flow Launcher that allows user
 - **Quick Access**: Pinned items stay at the top regardless of other sorting options.
 - **Efficient Workflows**: You can add and update multiple todos without clearing the command input.
 - **Filter Help**: You can filter through available commands using `td -h <search>` for quick lookup of specific help items.
-- **Sync Across Devices**: Configure your todo storage folder in a cloud service like OneDrive, Dropbox, or Google Drive to sync todos file across all your computers.
+- **Sync Across Devices**: Configure your todo storage folder in a cloud service like OneDrive, Dropbox, or Google Drive to sync todos file across all your devices.
 
 ## Contributing
 If you'd like to propose new features, improve existing ones, or report bugs, please open an issue or submit a pull request on this repository!
