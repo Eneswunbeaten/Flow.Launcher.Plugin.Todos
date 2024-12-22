@@ -1,9 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Flow.Launcher.Plugin;
-using Flow.Launcher.Plugin.SharedModels;
 
 namespace Flow.Launcher.Plugin.Todos
 {
@@ -35,6 +33,26 @@ namespace Flow.Launcher.Plugin.Todos
             };
         }
 
+        private Result CreateExternalLinkResult(string title, string subtitle, string url, int score, string iconPath)
+        {
+            return new Result
+            {
+                Title = title,
+                SubTitle = subtitle,
+                IcoPath = iconPath,
+                Score = score,
+                Action = _ =>
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                    return true;
+                }
+            };
+        }
+
         public List<Result> Show => GetHelpResults();
 
         public List<Result> GetHelpResults(string searchTerm = "")
@@ -42,8 +60,7 @@ namespace Flow.Launcher.Plugin.Todos
             const int baseScore = 1000000000;
             const int scoreDecrement = 1000000;
 
-            var commands = new (string title, string subtitle, string query)[]
-            {
+            var commands = new (string title, string subtitle, string query)[] {
                 ($"{_query.ActionKeyword} -h [keyword]", "Show help and filter available commands on keyword", $"{_query.ActionKeyword} -h "),
                 ($"{_query.ActionKeyword} [keyword]", "List todos matching the keyword", $"{_query.ActionKeyword}"),
                 ($"{_query.ActionKeyword} -l [keyword]", "List all todos, including completed ones", $"{_query.ActionKeyword} -l "),
@@ -68,12 +85,22 @@ namespace Flow.Launcher.Plugin.Todos
             var results = new List<Result>();
             int currentScore = baseScore;
 
+            // Add the GitHub Star Option
+            string githubIconPath = Path.Combine(_context.CurrentPluginMetadata.PluginDirectory, @"ico\github.png");
+            results.Add(CreateExternalLinkResult(
+                title: "🌟 Star this plugin on GitHub",
+                subtitle: "Open the GitHub page to star this repository if you enjoy this plugin!",
+                url: "https://github.com/Or1g3n/Flow.Launcher.Plugin.Todos",
+                score: currentScore - scoreDecrement,
+                iconPath: githubIconPath
+            ));
+            
             foreach (var (title, subtitle, query) in commands)
             {
                 if (subtitle.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || searchTerm == "")
                 {
                     results.Add(CreateResult(title, subtitle, query, currentScore));
-                    currentScore -= scoreDecrement; // Decrement the score after each addition
+                    currentScore -= scoreDecrement;
                 }
             }
 
