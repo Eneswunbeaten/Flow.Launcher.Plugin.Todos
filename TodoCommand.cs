@@ -23,6 +23,9 @@ namespace Flow.Launcher.Plugin.Todos
         [Description("Sort")]
         S,
         [Description("Uncheck")]
-        U
+        U,
+        List,   // Default - lists todos
+        Add,    // Add new todo
+        Menu    // Show menu options
     }
 }
